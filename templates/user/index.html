@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.2/css/all.min.css" integrity="sha512-1sCRPdkRXhBV2PBLUdRb4tMg1w2YPf37qatUFeS7zlBy7jJI8Lf4VHwWfZZfpXtYSLy85pkm9GaYVYMfw5BC1A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+		<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=DM+Sans&family=Kanit&family=Lexend+Deca&family=Pathway+Extreme&family=Urbanist&display=swap" rel="stylesheet">
+	<link href="https://cdn.jsdelivr.net/npm/simple-datatables@latest/dist/style.css" rel="stylesheet" type="text/css">
+		<link href="../static/main.css" rel="stylesheet" />
+
+	<title> sistema </title>
+</head>
+<body class=" bg-neutralLight ">
+
+<nav class="relative sticky top-0 z-50  w-full md:px-6.5 font-lexend">
+
+	<div class="md:w-78 md:px-10 mx-auto flex justify-between items-center py-2 font-lexend text-cta text-white drop-shadow-md bg-primaryLight">
+
+		<div class="flex items-center w-max md:w-1/4 h-12 ">
+			<a href="" class="px-2 md:px-0 text-2xl md:text-4xl text-white text-center italic">
+				Security System
+			</a>
+	  </div>
+		
+		<div class="hidden md:flex md:w-2/3 justify-end space-x-8 text-2xl">
+	    <li class="list-none">
+	      <a class="p-2 hover:border-b-4 hover:border-white text-white " href="/user/index"> Panel</a>
+	    </li>
+	
+	    <li class="list-none ">
+	      <a class="p-2 hover:border-b-4 hover:border-white text-white " href="/user/historial"> Historial</a>
+	    </li>
+
+	    <li class="list-none ">
+	      <a class="p-2 hover:border-b-4 hover:border-white text-white " href="/logout"> <i class="fas fa-sign-out-alt"></i> Cerrar Sesion</a>
+	    </li>
+
+		</div>
+
+	 	<!-- mobile mobile-menu button -->
+	  <button id="mobile-btn" class="md:hidden block mobile-menu focus:outline-none focus:border-2 mr-2">
+	    <span class="mobile-menu-top bg-ctaDark"></span>
+	    <span class="mobile-menu-middle bg-ctaDark"></span>
+	    <span class="mobile-menu-bottom bg-ctaDark"></span>
+	  </button>
+	</div>
+
+</nav>
+
+
+		<input type="hidden" id="url" data-controller="<?php echo $data['controller'] ?>" data-root="<?php echo URLROOT ?>" data-page="<?php echo $data['page'] ?>">
+
+	<div class="w-full flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-4 p-4 rounded-lg font-lexend md:px-6.5">
+
+    <div class="md:w-1/3 w-full flex flex-col p-2 rounded-xl bg-white border drop-shadow-lg space-y-4">
+      <div class="flex justify-center p-2 items-center ">
+      	<h2 class="text-xl">Usuario : 
+          {% if session['user'] is defined %}
+            <div class="w-full p-2 bg-neutral text-center text-lg text-dark">
+              {{session['user']}}
+            </div>
+          {% endif %}
+
+      </h2>
+      </div>
+    </div>
+
+
+    <div class="md:w-2/3 w-full flex flex-col px-4 py-6 rounded-xl bg-white border drop-shadow-lg space-y-4">
+    	<div class="w-full p-4 text-center">
+    		<h2 class="text-4xl">Live Stream</h2>
+    		<div id="response" class="hidden"></div>
+    	</div>
+
+      <div class="flex flex-col space-y-4 justify-center p-4 items-center ">
+
+      	<div class="w-full p-4">
+      		<img src="{{ url_for('video_feed') }}" alt="" class="mx-auto h-96 p-4 rounded-xl bg-cta">
+      	</div>
+
+      	<div class="p-4">
+      		<form method="post" action="{{ url_for('tasks') }}">
+						<!-- <input type="submit" value="Stop/Start" name="stop" class="w-max rounded-lg bg-cta p-3 hover:text-white hover:bg-dark" /> -->
+						<input type="submit" value="Activar" name="click" id="reco" class="w-max rounded-lg bg-dark p-4 font-bold cursor-pointer text-white text-xl "/>
+					</form>
+      	</div>
+
+      </div>
+
+    </div>
+	</div>
+
+	<script>
+		
+
+const reco = document.querySelector('#reco')
+
+reco.addEventListener('click', (e) => {
+ 	e.target.classList.toggle('bg-cta')
+ 	e.target.classList.toggle('bg-primary')
+ 	e.target.classList.toggle('text-white')
+
+			const response = document.querySelector('#response')
+			response.classList.toggle('hidden')
+})
+
+	</script>
+
+
+
+	
+</body>
+</html>
+

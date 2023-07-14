@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.2/css/all.min.css" integrity="sha512-1sCRPdkRXhBV2PBLUdRb4tMg1w2YPf37qatUFeS7zlBy7jJI8Lf4VHwWfZZfpXtYSLy85pkm9GaYVYMfw5BC1A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans&family=Kanit&family=Lexend+Deca&family=Pathway+Extreme&family=Urbanist&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/simple-datatables@latest/dist/style.css" rel="stylesheet" type="text/css">
+    <link href="../static/main.css" rel="stylesheet" />
+  
+
+  <title> sistema </title>
+</head>
+<body class=" no-scrollbar  bg-primary">
+
+  
+
+  <!-- flex form section -->
+  <section id="form_login" class="flex flex-col items-center ">
+    
+    <div class="absolute rounded-md bg-white mt-44 px-8 py-6 mx-4 drop-shadow-md md:w-96">
+      <!-- form login -->
+      <form class="flex flex-col " action="/api/login" method="post" autocomplete="off" >
+        
+        <div class="mb-10 space-y-2 md:mb-6">
+          <h5 class="mx-6 text-dark text-lg font-bold text-center">
+            Security System
+          </h5>
+          {% if error is defined %}
+            <div class="w-full p-2 bg-neutral text-center text-lg text-dark">
+              {{error}}
+            </div>
+          {% endif %}
+
+        </div>
+
+        <div id="user-group" class="relative flex flex-col mb-6 space-y-1">
+
+          <label for="email" class="text-primaryDark">Correo electrónico</label>
+          <div class="flex border rounded-md items-center space-x-4 px-4 py-2">
+            <i class="fa-solid fa-user text-ctaDark fa-1x"></i>
+            <input id="email" type="text" name="email" class="w-full text-sm outline-none focus:bg-neutralLight" placeholder="Ingrese su correo" required>
+          </div>
+
+          <div id="user-check" class="absolute bottom-0 left-0 w-full h-1 "></div>
+        </div>
+
+        <div id="pass-group" class="relative flex flex-col mb-6 space-y-1">
+
+          <label for="password" class="text-primaryDark">Contraseña</label>          
+          <div class="flex border  rounded-md items-center space-x-4 px-4 py-2">
+            <i class="fa-solid fa-key text-ctaDark fa-1x"></i>
+            <input id="password" type="password" name="password" class="w-full text-sm outline-none focus:bg-neutralLight" placeholder="Ingrese su contraseña" required>
+            <i id="show" class="cursor-pointer fa-solid fa-eye text-dark fa-1x"></i>
+          </div>
+
+          <div id="pass-check" class="absolute bottom-0 left-0 w-full h-1 "></div>
+        </div>
+
+        <div class="mb-6">
+          <button type="submit" class="w-full p-3 rounded-md font-bold text-white bg-cta hover:bg-ctaDark">Iniciar Sesión</button>
+        </div>
+
+        <div class="w-full flex items-center justify-center text-center mb-6">
+          <a href="/register" class="bg-white rounded-full p-2 w-full text-cta border border-cta hover:bg-cta hover:text-white">Registrarse</a>
+        </div>
+        
+      </form>     
+    </div>
+  </section>
+
+
+
+  
+</body>
+</html>
+
