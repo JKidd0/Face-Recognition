@@ -1,51 +1,17 @@
-from flask import Flask, render_template, Response, request, session, redirect
-from flaskext.mysql import MySQL
+from flask import Flask, render_template, Response, request
 import cv2
-import datetime
-import os
 import numpy as np
-from threading import Thread
-from flask_bcrypt import Bcrypt
-import json
 import time
-import zmq
-import concurrent.futures
 
-global capture, rec_frame, grey, switch, neg, face, rec, out
-capture = 0
-grey = 0
-neg = 0
-face = 0
-switch = 1
-rec = 0
-url = "http://192.168.8.103:81/stream"
+capture = False
 
-# make shots directory to save pics
-try:
-    os.mkdir('./shots')
-except OSError as error:
-    pass
-
-mysql = MySQL()
 app = Flask(__name__)
-bcrypt = Bcrypt(app)
-
-# MySQL configurations
-app.config['MYSQL_DATABASE_USER'] = 'root'
-app.config['MYSQL_DATABASE_PASSWORD'] = ''
-app.config['MYSQL_DATABASE_DB'] = 'pyweb'
-app.config['MYSQL_DATABASE_HOST'] = 'localhost'
-mysql.init_app(app)
-
-#app.secret_key = 'why would I tell you my secret key?'
 
 camera = cv2.VideoCapture(0)
-camera.set(cv2.CAP_PROP_FRAME_WIDTH, 640)  # Set width to 640 pixels
-camera.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)  # Set height to 480 pixels
+camera.set(cv2.CAP_PROP_FRAME_WIDTH, 320)  # Set width to 320 pixels
+camera.set(cv2.CAP_PROP_FRAME_HEIGHT, 240)  # Set height to 240 pixels
 
 faceCascade = cv2.CascadeClassifier(cv2.data.haarcascades + "haarcascade_frontalface_default.xml")
-recognizer = cv2.face.LBPHFaceRecognizer_create()
-recognizer.read('trainer/modelo.yml')
 
 start_time = time.time()
 detected_person = ''
@@ -54,7 +20,9 @@ def detect_face(frame):
     global start_time, detected_person
 
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-    faces = faceCascade.detectMultiScale(gray, scaleFactor=1.1, minNeighbors=5, minSize=(30, 30))
+    
+    # Reduce the scaleFactor and minNeighbors for faster face detection
+    faces = faceCascade.detectMultiScale(gray, scaleFactor=1.05, minNeighbors=3, minSize=(30, 30))
 
     for (x, y, w, h) in faces:
         roi_gray = gray[y:y+h, x:x+w]
@@ -72,17 +40,18 @@ def detect_face(frame):
                 detected_person = recognized_name
 
         font = cv2.FONT_HERSHEY_SIMPLEX
-        cv2.putText(frame, recognized_name, (x, y-10), font, 0.9, (0, 255, 0) if recognized_name == "Recognized" else (0, 0, 255), 2, cv2.LINE_AA)
+        cv2.putText(frame, recognized_name, (x, y-10), font, 0.9, (0, 255, 0) if recognized_name == "Recognized" else (0, 0, 255), 2)
         cv2.rectangle(frame, (x, y), (x+w, y+h), (0, 255, 0) if recognized_name == "Recognized" else (0, 0, 255), 2)
 
     current_time = time.time()
     time_diff = current_time - start_time
     if time_diff >= 10.0 and detected_person == "Unknown":
-        cv2.putText(frame, "INTRUSO", (10, 30), font, 1, (0, 0, 255), 3, cv2.LINE_AA)
+        font = cv2.FONT_HERSHEY_SIMPLEX
+        cv2.putText(frame, "INTRUSO", (10, 30), font, 1, (0, 0, 255), 3)
 
-    cv2.putText(frame, "Tiempo transcurrido: {:.2f} segundos".format(time_diff), (10, 60), font, 1, (0, 0, 255), 2, cv2.LINE_AA)
+    cv2.putText(frame, "Tiempo transcurrido: {:.2f} segundos".format(time_diff), (10, 60), font, 1, (0, 0, 255), 2)
 
-    return cv2.flip(cv2.flip(frame, 1), 1)  # Flip horizontally twice
+    return cv2.flip(frame, 1)
 
 def gen_frames():
     while True:
@@ -96,6 +65,8 @@ def gen_frames():
 
             yield (b'--frame\r\n'
                    b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
+
+
 
 @app.route('/')
 def index():
